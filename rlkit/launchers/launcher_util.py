@@ -10,7 +10,7 @@ import torch
 import rlkit.torch.pytorch_util as ptu
 from rlkit.core import logger, setup_logger
 from rlkit.launchers import config
-from rlkit.experimental.kuanfang.utils.logging import logger as logging
+from rlkit.utils.logging import logger as logging
 
 
 GitInfo = NamedTuple(

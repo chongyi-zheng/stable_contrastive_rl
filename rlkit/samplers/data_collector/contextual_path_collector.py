@@ -6,8 +6,6 @@ from rlkit.policies.base import Policy
 from rlkit.samplers.data_collector import MdpPathCollector
 from rlkit.samplers.rollout_functions import contextual_rollout
 
-from rlkit.envs.contextual_env import NonEpisodicSubgoalContextualEnv  # NOQA
-
 
 class ContextualPathCollector(MdpPathCollector):
     def __init__(
@@ -42,10 +40,6 @@ class ContextualPathCollector(MdpPathCollector):
 
     def end_epoch(self, epoch):
         self._epoch_paths = deque(maxlen=self._max_num_epoch_paths_saved)
-
-        if isinstance(self._env, NonEpisodicSubgoalContextualEnv):
-            # print('Hard reset.')
-            self._env.end_epoch()
 
     def get_snapshot(self):
         snapshot = super().get_snapshot()

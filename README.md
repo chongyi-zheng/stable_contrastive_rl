@@ -51,7 +51,7 @@ You must setup the config file for launching experiments, providing paths to you
 ## Running Experiments
 
 ### Offline Dataset and Goals
-Download the simulation data and goals from [here](). Alternatively, you can recollect a new dataset by following the instructions in [bullet-manipulation](https://github.com/chongyi-zheng/bullet-manipulation).
+Download the simulation data and goals from [here](https://drive.google.com/file/d/1n4zmCerXjYlF8EK5TEOZdIEPRENhHwIB/view?usp=sharing). Alternatively, you can recollect a new dataset by following the instructions in [bullet-manipulation](https://github.com/chongyi-zheng/bullet-manipulation).
 
 ### Training Stable Contrastive RL
 ```

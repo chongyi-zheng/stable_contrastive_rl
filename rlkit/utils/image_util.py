@@ -10,7 +10,6 @@ class ImageAugment:
     def __init__(self,
                  image_size=48,
                  augment_order = ['RandomResizedCrop', 'ColorJitter'],
-                 # augment_order=['RandomCrop'],  # (chongyiz): use only random crop
                  augment_probability=0.95,
                  augment_params={
                     'RandomResizedCrop': dict(

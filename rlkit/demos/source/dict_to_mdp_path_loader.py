@@ -11,9 +11,9 @@ from rlkit.util.io import (
     sync_down_folder,
     get_absolute_path
 )
-from rlkit.experimental.kuanfang.utils.real_utils import filter_step_fn
+from rlkit.utils.real_utils import filter_step_fn
 
-from rlkit.experimental.chongyiz.utils.path_builder import PathBuilder
+from rlkit.utils.path_builder import PathBuilder
 
 
 def split_demo(demo, max_steps):

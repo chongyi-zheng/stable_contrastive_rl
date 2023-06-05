@@ -42,8 +42,6 @@ class RandomResizedCrop(transforms.RandomResizedCrop):
 class RandomCrop(transforms.RandomCrop):
     needs_size = True
     def set_params(self, img):
-        # (chongyiz): if we get params from original image instead of the padded one,
-        # the algorithm will simply crop the top left corner for the entire dataset.
         if self.padding is not None:
             img = F.pad(img, self.padding, self.fill, self.padding_mode)
 

@@ -6,7 +6,7 @@ from rlkit.policies.base import Policy
 from rlkit.samplers.data_collector import MdpPathCollector
 from rlkit.samplers.rollout_functions import contextual_rollout
 
-from rlkit.experimental.kuanfang.envs.contextual_env import NonEpisodicSubgoalContextualEnv  # NOQA
+from rlkit.envs.contextual_env import NonEpisodicSubgoalContextualEnv  # NOQA
 
 
 class ContextualPathCollector(MdpPathCollector):

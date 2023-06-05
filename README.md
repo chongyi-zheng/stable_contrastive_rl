@@ -53,7 +53,21 @@ You must setup the config file for launching experiments, providing paths to you
 ### Offline Dataset and Goals
 Download the simulation data and goals from [here](). Alternatively, you can recollect a new dataset by following the instructions in [bullet-manipulation](https://github.com/chongyi-zheng/bullet-manipulation).
 
+### Training Stable Contrastive RL
+```
+python experiments/train_eval_stable_contrastive_rl.py 
+--data_dir DATA_PATH --local --gpu 
+--name exp
+--arg_binding eval_seeds=EVAL_SEED
+```
 
+The `EVAL_SEED` corresponds to the name of evaluation tasks:
+```
+drawer: evalseeds=14
+pick and place (table): evalseeds=12
+pick and place (drawer): evalseeds=37
+push block, open drawer: evalseeds=31
+```
 
 ## Questions?
 If you have any questions, comments, or suggestions, please reach out to Chongyi Zheng (chongyiz@andrew.cmu.edu).

@@ -56,7 +56,7 @@ def get_default_variant(demo_paths):
         ),
         policy_class=GaussianCNNPolicy,
         policy_kwargs=dict(
-            hidden_sizes=[2048, 2048],
+            hidden_sizes=[1024, 1024, 1024, 1024],
             std=0.15,
             max_log_std=-1,
             min_log_std=-13,
@@ -67,7 +67,7 @@ def get_default_variant(demo_paths):
             dropout_prob=0.0,
         ),
         qf_kwargs=dict(
-            hidden_sizes=[2048, 2048],
+            hidden_sizes=[1024, 1024, 1024, 1024],
             representation_dim=16,
             repr_norm=False,
             repr_norm_temp=True,
@@ -77,7 +77,7 @@ def get_default_variant(demo_paths):
             img_encoder_arch='cnn',
             init_w=1E-12,
         ),
-        network_type=None,
+        network_type='contrastive_cnn',
 
         trainer_kwargs=dict(
             discount=0.99,
@@ -87,19 +87,19 @@ def get_default_variant(demo_paths):
 
             # Contrastive RL default hyperparameters
             bc_coef=0.05,
-            use_td=False,
-            entropy_coefficient=None,
+            use_td=True,
+            entropy_coefficient=0.0,
             target_entropy=0.0,
 
             augment_order=['crop'],
-            augment_probability=0.95,
+            augment_probability=0.25,
         ),
 
         max_path_length=400,
         algo_kwargs=dict(
-            batch_size=1024,
+            batch_size=2048,
             start_epoch=-300,
-            num_epochs=301,
+            num_epochs=1,
 
             num_eval_steps_per_epoch=2000,
             num_expl_steps_per_train_loop=2000,
@@ -119,10 +119,10 @@ def get_default_variant(demo_paths):
         ),
         online_offline_split=True,
         reward_kwargs=dict(
-            obs_type='latent',
+            obs_type='image',
             reward_type='sparse',
             epsilon=2.0,
-            terminate_episode=True,
+            terminate_episode=False,
         ),
         online_offline_split_replay_buffer_kwargs=dict(
             offline_replay_buffer_kwargs=dict(
@@ -203,7 +203,7 @@ def get_default_variant(demo_paths):
         pretrained_rl_path=None,
 
         eval_seeds=14,
-        num_demos=20,
+        num_demos=18,
 
         # Video
         num_video_columns=5,

@@ -1,5 +1,5 @@
 """
-Copy from RAD implementation https://github.com/MishaLaskin/rad
+Adapt from RAD implementation https://github.com/MishaLaskin/rad
 """
 
 import numpy as np
@@ -11,24 +11,8 @@ import rlkit.torch.pytorch_util as ptu
 from rlkit.experimental.chongyiz.networks.transform_layer import ColorJitterLayer
 
 
-# def random_crop(imgs, padding=4):
-#     n, c, h, w = imgs.shape
-#     # padded_imgs = nn.ZeroPad2d(padding)(imgs)
-#     padded_imgs = F.pad(imgs, pad=(padding, padding, padding, padding), mode='replicate')
-#     _, _, h_padded, w_padded = padded_imgs.shape
-#
-#     h_crop_max = h_padded - h + 1
-#     w_crop_max = w_padded - w + 1
-#     h1 = np.random.randint(0, h_crop_max, n)
-#     w1 = np.random.randint(0, w_crop_max, n)
-#     cropped = torch.empty_like(imgs)
-#     for i, (padded_img, w11, h11) in enumerate(zip(padded_imgs, w1, h1)):
-#         cropped[i] = padded_img[:, h11:h11 + h, w11:w11 + w]
-#
-#     return cropped
-
-# (chongyiz): implement random cropping using 2d convolution
 def random_crop(imgs, padding=4):
+    """Random cropping via 2d convolution"""
     n, c, h, w = imgs.shape
     assert c % 3 == 0
     padded = F.pad(imgs, pad=(padding, padding, padding, padding), mode='replicate')

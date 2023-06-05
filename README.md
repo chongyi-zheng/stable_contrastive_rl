@@ -39,6 +39,7 @@ Add dependency paths.
 export PYTHONPATH=$PYTHONPATH:/path/to/multiworld
 export PYTHONPATH=$PYTHONPATH:/path/to/bullet-manipulation
 export PYTHONPATH=$PYTHONPATH:/path/to/bullet-manipulation/bullet-manipulation/roboverse/envs/assets/bullet-objects
+export PATH=$PATH:/path/to/anaconda/envs/stable_contrastive_rl/bin
 ```
 
 ### Setup Config File

@@ -9,9 +9,7 @@ from rlkit.torch.sac.policies.gaussian_policy import (
     LOG_SIG_MIN,
 )
 from rlkit.torch.distributions import MultivariateDiagonalNormal
-
-
-from rlkit.networks.cnn import CNN
+from rlkit.torch.networks import CNN
 
 
 class GaussianCNNPolicy(CNN, TorchStochasticPolicy):

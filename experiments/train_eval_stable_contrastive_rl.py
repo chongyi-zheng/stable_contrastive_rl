@@ -63,8 +63,6 @@ def get_default_variant(demo_paths):
             std_architecture='shared',
             output_activation=None,
             layer_norm=True,
-            init_w=1E-12,
-            dropout_prob=0.0,
         ),
         qf_kwargs=dict(
             hidden_sizes=[1024, 1024, 1024, 1024],

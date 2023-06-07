@@ -55,7 +55,7 @@ You must setup the config file for launching experiments, providing paths to you
 ## Running Experiments
 
 ### Offline Dataset and Goals
-Download the simulation data and goals from [here](https://drive.google.com/file/d/1n4zmCerXjYlF8EK5TEOZdIEPRENhHwIB/view?usp=sharing). Alternatively, you can recollect a new dataset by following the instructions in [bullet-manipulation](https://github.com/chongyi-zheng/bullet-manipulation).
+Download the simulation data and goals from [here](https://drive.google.com/file/d/1znc5-gX_ICEg3EjvWSSjEUzhobB_qILb/view?usp=sharing). Alternatively, you can recollect a new dataset by following the instructions in [bullet-manipulation](https://github.com/chongyi-zheng/bullet-manipulation).
 
 ### Training Stable Contrastive RL
 ```
@@ -67,7 +67,7 @@ python experiments/train_eval_stable_contrastive_rl.py
 
 The `EVAL_SEED` corresponds to the name of evaluation tasks:
 ```
-drawer: evalseeds=14
+drawer: evalseeds=49
 pick and place (table): evalseeds=12
 pick and place (drawer): evalseeds=37
 push block, open drawer: evalseeds=31

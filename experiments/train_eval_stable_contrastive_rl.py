@@ -90,7 +90,7 @@ def get_default_variant(demo_paths):
             target_entropy=0.0,
 
             augment_order=['crop'],
-            augment_probability=0.25,
+            augment_probability=0.5,
         ),
 
         max_path_length=400,

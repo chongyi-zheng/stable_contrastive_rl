@@ -1145,7 +1145,8 @@ drawer_pnp_push_commands = [
             "low": [-0.00, -0.00, 0],
             "high": [0.00, 0.00, 0],
         },
-        "large_object_quadrant": 3,
+        # "large_object_quadrant": 3,  # push block, close drawer
+        "large_object_quadrant": 2,  # drawer
         "command_sequence": [
             ("move_drawer", {}),
             ("move_obj_slide",

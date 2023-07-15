@@ -60,7 +60,8 @@ Download the simulation data and goals from [here](https://drive.google.com/file
 ### Training Stable Contrastive RL
 ```
 python experiments/train_eval_stable_contrastive_rl.py 
---data_dir DATA_PATH --local --gpu 
+--data_dir DATA_PATH --base_log_dir LOG_DIR
+--local --gpu 
 --name exp
 --arg_binding eval_seeds=EVAL_SEED
 ```

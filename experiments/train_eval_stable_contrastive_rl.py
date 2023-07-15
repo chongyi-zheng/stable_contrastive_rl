@@ -86,6 +86,7 @@ def get_default_variant(demo_paths):
             # Contrastive RL default hyperparameters
             bc_coef=0.05,
             use_td=True,
+            use_td_cpc=False,
             entropy_coefficient=0.0,
             target_entropy=0.0,
 

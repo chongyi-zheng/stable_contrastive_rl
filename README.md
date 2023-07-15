@@ -50,7 +50,7 @@ export PATH=$PATH:/path/to/anaconda/envs/stable_contrastive_rl/bin
 
 You must setup the config file for launching experiments, providing paths to your code and data directories. Inside `railrl/config/launcher_config.py`, fill in the appropriate paths. You can use `railrl/config/launcher_config_template.py` as an example reference.
 
-```cp railrl/launchers/config-template.py railrl/launchers/config.py```
+```cp rlkit/launchers/config-template.py rlkit/launchers/config.py```
 
 ## Running Experiments
 

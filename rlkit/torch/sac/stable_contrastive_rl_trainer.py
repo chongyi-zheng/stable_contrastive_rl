@@ -3,6 +3,7 @@ import numpy as np
 import torch
 import torch.optim as optim
 from torch import nn as nn
+import torch.nn.functional as F
 
 import rlkit.torch.pytorch_util as ptu
 from rlkit.core.eval_util import create_stats_ordered_dict
@@ -27,6 +28,7 @@ class StableContrastiveRLTrainer(TorchTrainer):
             soft_target_tau=1e-2,
             target_update_period=1,
             use_td=False,
+            use_td_cpc=False,
             entropy_coefficient=None,
             target_entropy=None,
             bc_coef=0.05,
@@ -45,6 +47,7 @@ class StableContrastiveRLTrainer(TorchTrainer):
         self.target_update_period = target_update_period
         self.gradient_clipping = gradient_clipping
         self.use_td = use_td
+        self.use_td_cpc = use_td_cpc
         self.entropy_coefficient = entropy_coefficient
         self.adaptive_entropy_coefficient = entropy_coefficient is None
         self.target_entropy = target_entropy
@@ -168,7 +171,7 @@ class StableContrastiveRLTrainer(TorchTrainer):
         batch_size = obs.shape[0]
         new_goal = goal
 
-        if self.use_td:
+        if self.use_td or self.use_td_cpc:
             new_goal = next_obs
         I = torch.eye(batch_size, device=ptu.device)
         logits, sa_repr, g_repr, sa_repr_norm, g_repr_norm = self.qf(
@@ -224,6 +227,30 @@ class StableContrastiveRLTrainer(TorchTrainer):
             qf_loss = (1 - self.discount) * loss_pos + \
                       self.discount * loss_neg1 + loss_neg2
             qf_loss = torch.mean(qf_loss)
+        elif self.use_td_cpc:
+            w = ptu.zeros(1)
+            assert not self.use_td
+
+            next_s_new_g = torch.cat([next_obs, new_goal], -1)
+            next_dist = self.policy(next_s_new_g)
+            next_action = next_dist.rsample()
+
+            next_logits = self.target_qf(
+                next_s_new_g, next_action)
+            next_logits = torch.min(next_logits, dim=-1)[0].detach()
+
+            logit_max = torch.max(next_logits, dim=1, keepdim=True)[0]
+            unnormalized = torch.exp(next_logits - logit_max) * (1 - I)
+            neg_labels = unnormalized / torch.sum(unnormalized, dim=1, keepdim=True)
+
+            # These cross entropy losses should be run with PyTorch >= 1.10
+            # https://discuss.pytorch.org/t/cross-entropy-with-logit-targets/134068/3
+            ce_loss = nn.CrossEntropyLoss(reduction='none')
+            loss_pos = ce_loss(logits, I.unsqueeze(-1).repeat_interleave(logits.shape[-1], dim=-1))
+            loss_neg = ce_loss(logits, neg_labels.unsqueeze(-1).repeat_interleave(logits.shape[-1], dim=-1))
+            qf_loss = (1 - self.discount) * loss_pos + self.discount * loss_neg
+
+            qf_loss = torch.mean(qf_loss)
         else:  # For the MC losses.
             w = ptu.zeros(1)
 
@@ -234,7 +261,7 @@ class StableContrastiveRLTrainer(TorchTrainer):
                 # logits.shape = (B, B, 2) with 1 term for positive pair
                 # and (B - 1) terms for negative pairs in each row
                 qf_loss = self.qf_criterion(
-                    logits, I.unsqueeze(-1).repeat(1, 1, 2)).mean(-1)
+                    logits, I.unsqueeze(-1).repeat_interleave(logits.shape[-1], dim=-1)).mean(-1)
             else:
                 qf_loss = self.qf_criterion(logits, I)
             qf_loss *= qf_loss_weights

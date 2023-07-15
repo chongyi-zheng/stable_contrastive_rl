@@ -3,7 +3,7 @@
 EXP_NAME=$1
 
 SCRIPT_DIR=$(dirname "$BASH_SOURCE")
-PROJECT_DIR=$(realpath "$SCRIPT_DIR/..")
+PROJECT_DIR=$(realpath "$SCRIPT_DIR/../..")
 
 export PYTHONUNBUFFERED=1
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib

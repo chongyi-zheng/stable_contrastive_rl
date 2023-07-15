@@ -29,6 +29,7 @@ for seed in "${seeds[@]}"; do
     --local \
     --gpu \
     --data_dir "$LOG_ROOT"/offline_c_learning/dataset \
+    --base_log_dir "$LOG_ROOT"/offline_c_learning/td_cpc_logs/env6_250k/"${EVAL_SEED}" \
     --name "${EXP_NAME}" \
     --arg_binding method_name=td_cpc \
     --arg_binding eval_seeds="${EVAL_SEED}" \

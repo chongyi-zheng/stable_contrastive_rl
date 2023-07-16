@@ -106,7 +106,7 @@ def get_default_variant(demo_paths):
             min_num_steps_before_training=4000,
 
             eval_epoch_freq=5,
-            offline_expl_epoch_freq=10000,  # set to a large number
+            offline_expl_epoch_freq=5,
         ),
         replay_buffer_kwargs=dict(
             fraction_next_context=0.0,

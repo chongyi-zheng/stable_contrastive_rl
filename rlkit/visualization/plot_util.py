@@ -4,11 +4,15 @@ import itertools
 import os
 import glob
 import matplotlib.pyplot as plt
+from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes
+from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 import numpy as np
 import copy
+from itertools import cycle
 
 import json
 from pprint import pprint
+
 try:
     import rllab.viskit.core as core
 except:
@@ -20,6 +24,8 @@ def read_tb(): return None
 
 
 def true_fn(p): return True
+
+
 def identity_fn(x): return x
 
 
@@ -65,7 +71,8 @@ class NumpyLogReader:
         return d
 
 
-def load_exps(dirnames, filter_fn=true_fn, suppress_output=False, progress_filename="progress.csv", custom_log_reader=None):
+def load_exps(dirnames, filter_fn=true_fn, suppress_output=False, progress_filename="progress.csv",
+              custom_log_reader=None):
     def load():
         if progress_filename == "progress.csv":
             return core.load_exps_data(dirnames)
@@ -128,9 +135,9 @@ def read_params_from_output(filename, maxlines=200):
             l = f.readline()
             if not ":" in l:
                 break
-            kv = l[l.find("]")+1:]
+            kv = l[l.find("]") + 1:]
             colon = kv.find(":")
-            k, v = kv[:colon], kv[colon+1:]
+            k, v = kv[:colon], kv[colon + 1:]
             params[k.strip()] = v.strip()
         f.close()
         cached_params[filename] = params
@@ -173,6 +180,7 @@ def filter_by_flat_params(d):
             if l['flat_params'][k] != d[k]:
                 return False
         return True
+
     return f
 
 
@@ -182,6 +190,7 @@ def exclude_by_flat_params(d):
             if l['flat_params'][k] == d[k]:
                 return False
         return True
+
     return f
 
 
@@ -210,6 +219,9 @@ def _comparison(exps, key, vary=["expdir"], f=true_fn, smooth=identity_fn,
                 plot_error_bars=True, plot_seeds=False, overlay=False,
                 formatting_func=None, ax=None,
                 print_on_missing_key=True, print_zero=False,
+                log_scale=False, symlog_scale=False,
+                plot_zoom_in=False, zoom_in_x_lim=None, zoom_in_y_lim=None,
+                **plot_kwargs,
                 ):
     """exps is result of core.load_exps_data
     key is (what we might think is) the effect variable
@@ -240,6 +252,7 @@ def _comparison(exps, key, vary=["expdir"], f=true_fn, smooth=identity_fn,
         print(v)
         print(l['flat_params'])
         error_key_not_found_in_flat_params
+
     for l in exps:
         if f(l) and l['progress']:
             if label_include_key:
@@ -292,6 +305,10 @@ def _comparison(exps, key, vary=["expdir"], f=true_fn, smooth=identity_fn,
     labels = sorted(y_data.keys())
     if method_order:
         labels = np.array(labels)[np.array(method_order)]
+
+    zoom = -np.inf
+    cmap = plt.cm.get_cmap('tab20', len(labels))
+    cycol = cycle(cmap.colors)
     for label in labels:
         if not len(ys):
             return []
@@ -308,13 +325,49 @@ def _comparison(exps, key, vary=["expdir"], f=true_fn, smooth=identity_fn,
             if not label_to_color is None:
                 label_without_vary_prefix = label.split(":")[-1]
                 color = label_to_color[label_without_vary_prefix]
-                plot_kwargs["color"] = color
+            else:
+                color = next(cycol)
+            plot_kwargs["color"] = color
+            if symlog_scale:
+                ax.set_yscale('symlog')
+            if log_scale:
+                ax.set_yscale('log')
             if plot_error_bars:
-                ax.fill_between(x, y-1.96*s, y+1.96*s,
+                ax.fill_between(x, y - 1.96 * s, y + 1.96 * s,
                                 alpha=0.1, **plot_kwargs)
             line, = ax.plot(x, y, label=str(label) +
-                            label_suffix, **plot_kwargs)
+                                        label_suffix, **plot_kwargs)
             lines.append(line)
+
+            # (chongyiz)
+            if plot_zoom_in:
+                # Make the zoom-in plot:
+                zoom = max(
+                    (max(y) - min(y)) / (zoom_in_y_lim[1] - zoom_in_y_lim[0]),
+                    zoom)
+                # zoom = 12
+
+                axins = zoomed_inset_axes(ax, zoom, loc='upper right')  # zoom = 2
+                # axins.plot(x, y, **plot_kwargs)
+                if log_scale:
+                    axins.set_yscale('log')
+                if symlog_scale:
+                    ax.set_yscale('symlog')
+                if plot_error_bars:
+                    axins.fill_between(x, y - 1.96 * s, y + 1.96 * s,
+                                       alpha=0.1, color=line.get_color(), **plot_kwargs)
+                axins.plot(x, y, label=str(label) + label_suffix,
+                           color=line.get_color(), **plot_kwargs)
+                axins.set_xlim(zoom_in_x_lim[0], zoom_in_x_lim[1])
+                # axins.set_xticks(
+                #     np.arange(zoom_in_x_lim[0], zoom_in_x_lim[1] + 1, zoom_in_x_lin))
+                axins.set_ylim(zoom_in_y_lim[0], zoom_in_y_lim[1])
+                # axins.set_yticks(
+                #     np.arange(zoom_in_x_lim[0], zoom_in_x_lim[1] + 1,
+                #               (zoom_in_x_lim[1] - zoom_in_y_lim)))
+                # plt.xticks(visible=False)
+                # plt.yticks(visible=False)
+                mark_inset(ax, axins, loc1=2, loc2=4, fc="none", ec="0.5")
 
             if plot_seeds:
                 color = line.get_color()
@@ -381,9 +434,13 @@ def split(exps,
           split_fig=False,
           default_vary=None,
           num_x_plots=1,
+          symlog_scale_keys=None,
+          log_scale_keys=None,
+          zoom_in_keys=None,  # (chongyiz)
+          zoom_in_x_lims=None,  # (chongyiz)
+          zoom_in_y_lims=None,  # (chongyiz)
           **kwargs
           ):
-
     default_vary = {} if default_vary is None else default_vary
 
     split_values = {}
@@ -414,7 +471,7 @@ def split(exps,
     configs = list(itertools.product(*configurations))
     total_plots = len(configs) * len(keys)
     num_y_plots = (total_plots - 1) // num_x_plots + 1
-    new_figsize = (figsize[0] * num_x_plots, figsize[1] * num_y_plots, )
+    new_figsize = (figsize[0] * num_x_plots, figsize[1] * num_y_plots,)
     fig, axs = plt.subplots(num_y_plots, num_x_plots, figsize=new_figsize)
     axs = np.array([axs]).flatten()
     i = 0
@@ -422,12 +479,31 @@ def split(exps,
         if split_fig:
             plt.figure(figsize=figsize)
 
-        def fsplit(exp): return all(
-            [str(exp['flat_params'][k]) == v for k, v in c]) and f(exp)
+        def fsplit(exp):
+            return all(
+                [str(exp['flat_params'][k]) == v for k, v in c]) and f(exp)
+
         # for exp in exps:
         #     print(fsplit(exp), exp['flat_params'])
         lines = []
         for key in keys:
+            plot_zoom_in, zoom_in_x_lim, zoom_in_y_lim = False, None, None
+            if zoom_in_keys and key == zoom_in_keys[0]:
+                zoom_in_keys.pop(0)
+                plot_zoom_in = True
+                zoom_in_x_lim = zoom_in_x_lims.pop(0)
+                zoom_in_y_lim = zoom_in_y_lims.pop(0)
+
+            symlog_scale = False
+            if symlog_scale_keys and key == symlog_scale_keys[0]:
+                symlog_scale_keys.pop(0)
+                symlog_scale = True
+
+            log_scale = False
+            if log_scale_keys and key == log_scale_keys[0]:
+                log_scale_keys.pop(0)
+                log_scale = True
+
             ax = axs[i]
             i += 1
             if print_final or print_max or print_min:
@@ -444,6 +520,11 @@ def split(exps,
                                  print_plot=print_plot,
                                  ax=ax,
                                  default_vary=default_vary,
+                                 symlog_scale=symlog_scale,
+                                 log_scale=log_scale,
+                                 plot_zoom_in=plot_zoom_in,
+                                 zoom_in_x_lim=zoom_in_x_lim,
+                                 zoom_in_y_lim=zoom_in_y_lim,
                                  **kwargs)
             if print_plot:
                 ax.set_title(prettify_configuration(
@@ -528,7 +609,7 @@ def padded_moving_average(data_array, window=5, avg_only_from_left=True):
     new_list = []
     for i in range(len(data_array)):
         if avg_only_from_left:
-            indices = list(range(max(i - window + 1, 0), i+1))
+            indices = list(range(max(i - window + 1, 0), i + 1))
         else:
             indices = list(range(max(i - window + 1, 0),
                                  min(i + window + 1, len(data_array))))
@@ -600,15 +681,15 @@ def configure_matplotlib(matplotlib):
 
 
 def number_K_format_func(value, tick_number):
-    return(str(int(value // 1000)) + 'K')
+    return (str(int(value // 1000)) + 'K')
 
 
 def number_M_format_func(value, tick_number):
-    return(str(int(value // 1000000)) + 'M')
+    return (str(int(value // 1000000)) + 'M')
 
 
 def format_func_epoch(value, tick_number):
-    return(str(int(value)) + 'K')
+    return (str(int(value)) + 'K')
 
 
 def extract_comparison(exp, method_name, metric_key, smooth=10):

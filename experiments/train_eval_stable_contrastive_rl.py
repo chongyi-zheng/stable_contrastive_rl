@@ -25,6 +25,7 @@ flags.DEFINE_bool('gpu', True, '')
 flags.DEFINE_bool('save_pretrained', True, '')
 flags.DEFINE_bool('debug', False, '')
 flags.DEFINE_bool('script', False, '')
+flags.DEFINE_integer('run_id', 0, '')
 flags.DEFINE_multi_string(
     'arg_binding', None, 'Variant binding to pass through.')
 
@@ -340,7 +341,7 @@ def main(_):
 
     run_variants(stable_contrastive_rl_experiment,
                  variants,
-                 run_id=0,
+                 run_id=FLAGS.run_id,
                  process_args_fn=process_args)
 
 

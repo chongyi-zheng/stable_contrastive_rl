@@ -22,8 +22,8 @@ declare -a seeds=(0 1)
 
 for seed in "${seeds[@]}"; do
   export CUDA_VISIBLE_DEVICES=$seed
-  rm -r "$LOG_ROOT"/offline_c_learning/td_cpc_logs/env6_250k/"${EVAL_SEED}"/"${EXP_NAME}"/run0/id"$seed"
-  mkdir -p "$LOG_ROOT"/offline_c_learning/td_cpc_logs/env6_250k/"${EVAL_SEED}"/"${EXP_NAME}"/run0/id"$seed"
+  rm -r "$LOG_ROOT"/offline_c_learning/td_cpc_logs/env6_250k/"${EVAL_SEED}"/"${EXP_NAME}"/run"$seed"/id0
+  mkdir -p "$LOG_ROOT"/offline_c_learning/td_cpc_logs/env6_250k/"${EVAL_SEED}"/"${EXP_NAME}"/run"$seed"/id0
   nohup \
   python experiments/train_eval_stable_contrastive_rl.py \
     --local \
@@ -31,12 +31,13 @@ for seed in "${seeds[@]}"; do
     --data_dir "$LOG_ROOT"/offline_c_learning/dataset \
     --base_log_dir "$LOG_ROOT"/offline_c_learning/td_cpc_logs/env6_250k/"${EVAL_SEED}" \
     --name "${EXP_NAME}" \
+    --run_id "$seed" \
     --arg_binding method_name=td_cpc \
     --arg_binding eval_seeds="${EVAL_SEED}" \
     --arg_binding trainer_kwargs.augment_probability=0.25 \
     --arg_binding trainer_kwargs.use_td=False \
     --arg_binding trainer_kwargs.use_td_cpc=True \
     --arg_binding num_demos=18 \
-  > "$LOG_ROOT"/offline_c_learning/td_cpc_logs/env6_250k/"${EVAL_SEED}"/"${EXP_NAME}"/run0/id"$seed"/stream.log 2>&1 & \
+  > "$LOG_ROOT"/offline_c_learning/td_cpc_logs/env6_250k/"${EVAL_SEED}"/"${EXP_NAME}"/run"$seed"/id0/stream.log 2>&1 & \
   sleep 2
 done

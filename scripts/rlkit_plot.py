@@ -163,7 +163,7 @@ if __name__ == "__main__":
     ])
     parser.add_argument('--vary', type=str, nargs='+', default=[
         'method_name',
-        # 'run_id',
+        'run_id',
     ])
     parser.add_argument('--plot_seeds', type=str2bool, default=True)
     parser.add_argument('--plot_error_bars', type=str2bool, default=False)

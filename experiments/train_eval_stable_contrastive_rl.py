@@ -8,7 +8,10 @@ from roboverse.envs.sawyer_rig_affordances_v6 import SawyerRigAffordancesV6
 
 import rlkit.util.hyperparameter as hyp
 from rlkit.launchers.arglauncher import run_variants
-from rlkit.networks.gaussian_policy import GaussianCNNPolicy
+from rlkit.networks.gaussian_policy import (
+    GaussianCNNPolicy,
+    GaussianTwoChannelCNNPolicy
+)
 
 from rlkit.envs.drawer_pnp_push_commands import drawer_pnp_push_commands
 from rlkit.learning.stable_contrastive_rl import stable_contrastive_rl_experiment
@@ -55,7 +58,7 @@ def get_default_variant(demo_paths):
         env_kwargs=dict(
             test_env=True,
         ),
-        policy_class=GaussianCNNPolicy,
+        policy_class=GaussianTwoChannelCNNPolicy,
         policy_kwargs=dict(
             hidden_sizes=[1024, 1024, 1024, 1024],
             std=0.15,

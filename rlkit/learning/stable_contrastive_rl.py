@@ -35,7 +35,10 @@ from rlkit.utils.logging import logger as logging
 from rlkit.learning.contextual_replay_buffer import ContextualRelabelingReplayBuffer
 from rlkit.learning.online_offline_split_replay_buffer import OnlineOfflineSplitReplayBuffer
 from rlkit.networks.contrastive_networks import ContrastiveQf
-from rlkit.networks.gaussian_policy import GaussianCNNPolicy
+from rlkit.networks.gaussian_policy import (
+    GaussianCNNPolicy,
+    GaussianTwoChannelCNNPolicy
+)
 
 
 state_obs_key = 'state_observation'
@@ -308,6 +311,17 @@ def stable_contrastive_rl_experiment(
                 policy_kwargs['input_width'] = imsize
                 policy_kwargs['input_height'] = imsize
                 policy_kwargs['input_channels'] = 6
+                policy_kwargs['kernel_sizes'] = [8, 4, 3]
+                policy_kwargs['n_channels'] = [32, 64, 64]
+                policy_kwargs['strides'] = [4, 2, 1]
+                policy_kwargs['paddings'] = [2, 1, 1]
+                policy_kwargs['conv_normalization_type'] = 'layer' if policy_layer_norm else 'none'
+                policy_kwargs['fc_normalization_type'] = 'layer' if policy_layer_norm else 'none'
+            elif policy_class == GaussianTwoChannelCNNPolicy:
+                assert policy_kwargs['output_activation'] is None
+                policy_kwargs['input_width'] = imsize
+                policy_kwargs['input_height'] = imsize
+                policy_kwargs['input_channels'] = 3
                 policy_kwargs['kernel_sizes'] = [8, 4, 3]
                 policy_kwargs['n_channels'] = [32, 64, 64]
                 policy_kwargs['strides'] = [4, 2, 1]

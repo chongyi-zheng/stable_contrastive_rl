@@ -108,7 +108,7 @@ class StableContrastiveRLTrainer(TorchTrainer):
                 batch['observations'].shape[0] > 0):
             width = self.policy.input_width
             height = self.policy.input_height
-            channel = self.policy.input_channels // 2
+            channel = self.policy.input_channels
 
             img_obs = batch['observations'].reshape(
                 -1, channel, width, height)

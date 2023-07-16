@@ -34,7 +34,7 @@ for seed in "${seeds[@]}"; do
     --run_id "$seed" \
     --arg_binding method_name=td_cpc \
     --arg_binding eval_seeds="${EVAL_SEED}" \
-    --arg_binding trainer_kwargs.augment_probability=0.25 \
+    --arg_binding trainer_kwargs.augment_probability=0.5 \
     --arg_binding trainer_kwargs.use_td=False \
     --arg_binding trainer_kwargs.use_td_cpc=True \
     --arg_binding num_demos=18 \

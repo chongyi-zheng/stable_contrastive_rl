@@ -134,7 +134,7 @@ def get_default_variant(demo_paths):
                 fraction_next_context=0.0,
                 fraction_future_context=1.0,
                 fraction_distribution_context=0.0,
-                max_size=0,
+                max_size=int(4E5),
                 neg_from_the_same_traj=False,
             ),
             sample_online_fraction=0.6

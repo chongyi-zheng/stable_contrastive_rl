@@ -126,9 +126,9 @@ class StableContrastiveRLTrainer(TorchTrainer):
                 aug_next_img_obs = func(aug_next_img_obs)
 
             # transpose to (B, C, W, H)
-            aug_img_obs = aug_img_obs.reshape([-1, channel, height, width])
-            aug_img_goal = aug_img_goal.reshape([-1, channel, height, width])
-            aug_next_img_obs = aug_next_img_obs.reshape([-1, channel, height, width])
+            aug_img_obs = aug_img_obs.permute(0, 1, 3, 2)
+            aug_img_goal = aug_img_goal.permute(0, 1, 3, 2)
+            aug_next_img_obs = aug_next_img_obs.permute(0, 1, 3, 2)
 
             augmented_batch['augmented_observations'] = aug_img_obs.flatten(1)
             augmented_batch['augmented_next_observations'] = aug_next_img_obs.flatten(1)

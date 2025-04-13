@@ -75,4 +75,4 @@ push block, open drawer: evalseeds=31
 ```
 
 ## Questions?
-If you have any questions, comments, or suggestions, please reach out to Chongyi Zheng (chongyiz@andrew.cmu.edu).
+If you have any questions, comments, or suggestions, please reach out to Chongyi Zheng (chongyiz@princeton.edu).
